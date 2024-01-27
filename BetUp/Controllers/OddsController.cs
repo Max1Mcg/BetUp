@@ -43,7 +43,7 @@ namespace WebApiBetsBot.Controllers
             var result = String.Empty;
             foreach (var role in _context.Roles)
             {
-                result += role.Name;
+                result += role.Name.Trim() + role.Description;
             }
             return result;
         }
