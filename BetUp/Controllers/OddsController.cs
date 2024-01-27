@@ -31,7 +31,7 @@ namespace WebApiBetsBot.Controllers
         }
         [Route("test")]
         [HttpGet]
-        public string GetTest()
+        public IActionResult GetTest()
         {
             /*var baseAddress = "http://ip.jsontest.com/?callback=showMyIP";
             var sharedClient = new HttpClient()
@@ -45,7 +45,20 @@ namespace WebApiBetsBot.Controllers
             {
                 result += role.Name.Trim() + role.Description;
             }
-            return result;
+            return Ok(new{ result = result});
+        }
+
+        public class Data
+        {
+            public string x { get; set; }
+            public string y { get; set; }
+        }
+
+        [Route("test")]
+        [HttpPost]
+        public IActionResult PostTest(Data data)
+        {
+            return Ok(new { inputArg = new { x = data.x, y = data.y } });
         }
     }
 }
