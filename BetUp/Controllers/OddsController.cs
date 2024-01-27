@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BetUp.DbModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApiBetsBot.Controllers
 {
@@ -30,15 +31,21 @@ namespace WebApiBetsBot.Controllers
         }
         [Route("test")]
         [HttpGet]
-        public async Task<string> GetTest()
+        public string GetTest()
         {
-            var baseAddress = "http://ip.jsontest.com/?callback=showMyIP";
+            /*var baseAddress = "http://ip.jsontest.com/?callback=showMyIP";
             var sharedClient = new HttpClient()
             {
                 BaseAddress = new Uri(baseAddress),
             };
-            //sharedClient.DefaultRequestHeaders.Add("Accept", "application/json");
-            return await sharedClient.GetAsync("baseAddress").Result.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
+            return await sharedClient.GetAsync("baseAddress").Result.EnsureSuccessStatusCode().Content.ReadAsStringAsync();*/
+            var _context = new BetUpContext();
+            var result = String.Empty;
+            foreach (var role in _context.Roles)
+            {
+                result += role.Name;
+            }
+            return result;
         }
     }
 }
