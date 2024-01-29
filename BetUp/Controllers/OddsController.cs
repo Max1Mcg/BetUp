@@ -4,6 +4,9 @@ using BetUp.DbContexts;
 using MarketPlace.Repositories.Base;
 using MarketPlace.Repositories.Interfaces;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Text.Json;
+using System;
+using BetUp.Models;
 
 namespace WebApiBetsBot.Controllers
 {
@@ -35,6 +38,18 @@ namespace WebApiBetsBot.Controllers
             //sharedClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
             return await sharedClient.GetAsync("baseAddress").Result.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
         }
+
+        [Route("[action]")]
+        [HttpGet]
+        public async Task<IActionResult> GetOBettingMatch()
+        {
+            var baseAddress = "https://jsonplaceholder.typicode.com/todos/1";
+            var sharedClient = new HttpClient();
+            var result = await sharedClient.GetAsync(baseAddress);
+            var obj = result.Content.ReadFromJsonAsync<TestResult>();
+            return Ok(obj.Result);
+        }
+
         [Route("test")]
         [HttpGet]
         public IActionResult GetTest()
