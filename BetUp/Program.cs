@@ -1,3 +1,9 @@
+using BetUp.DbContexts;
+using BetUp.DbModels;
+using MarketPlace.Repositories.Base;
+using MarketPlace.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,7 +12,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+//main context
+builder.Services.AddDbContext<BetUpContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("BetUpDb")));
 
+//repositories
+builder.Services.AddScoped<IBaseRepository<Role>, BaseRepository<Role>>();
 //add Cors
 builder.Services.AddCors(options => options.AddPolicy(name: "FrontendUI", policy =>
 {
