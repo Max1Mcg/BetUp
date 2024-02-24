@@ -1,5 +1,7 @@
 using BetUp.DbContexts;
 using BetUp.DbModels;
+using BetUp.Services;
+using BetUp.Services.IServices;
 using MarketPlace.Repositories.Base;
 using MarketPlace.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -17,6 +19,9 @@ builder.Services.AddDbContext<BetUpContext>(o => o.UseNpgsql(builder.Configurati
 
 //repositories
 builder.Services.AddScoped<IBaseRepository<Role>, BaseRepository<Role>>();
+builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IGenerateModelService, GenerateModelService>();
+builder.Services.AddScoped<IJsonToModelConvertService, JsonToModelConvertService>();
 //add Cors
 builder.Services.AddCors(options => options.AddPolicy(name: "FrontendUI", policy =>
 {

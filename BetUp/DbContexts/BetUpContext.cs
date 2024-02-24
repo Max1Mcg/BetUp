@@ -19,7 +19,6 @@ public partial class BetUpContext : DbContext
     public virtual DbSet<Role> Roles { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
-        //=> optionsBuilder.UseNpgsql("Server=localhost;Database=BetUp;Port=5432;User Id=postgres;Password=max985irjkf2001");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

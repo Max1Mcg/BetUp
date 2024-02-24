@@ -8,6 +8,9 @@ using System.Text.Json;
 using System;
 using BetUp.Models;
 using BetUp.Helpers;
+using BetUp.Services;
+using Microsoft.Extensions.Configuration;
+using BetUp.Services.IServices;
 
 namespace WebApiBetsBot.Controllers
 {
@@ -15,11 +18,17 @@ namespace WebApiBetsBot.Controllers
     [Route("[controller]")]
     public class OddsController : ControllerBase
     {
-
+        private IConfiguration _configuration;
         public IBaseRepository<Role> _baseRepTest;
-        public OddsController(IBaseRepository<Role> baseRepTest)
+        private IGenerateModelService _generateModelService;
+        public OddsController(
+            IBaseRepository<Role> baseRepTest, 
+            IConfiguration configuration,
+            IGenerateModelService generateModelService)
         {
             _baseRepTest = baseRepTest;
+            _configuration = configuration;
+            _generateModelService = generateModelService;
         }
 
         [Route("[action]")]
@@ -42,63 +51,19 @@ namespace WebApiBetsBot.Controllers
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult TestGetMethod()
+        public async Task<IActionResult> GetPariMatchesAsync()
         {
-            JsonHelper jsonHelper = new JsonHelper();
-            var value = jsonHelper.GetPropertyValue<string>("address.geo.lng");
-            return Ok(value);
-        }
-
-        [Route("[action]")]
-        [HttpGet]
-        public async Task<IActionResult> GetOBettingMatch()
-        {
-            var baseAddress = "https://jsonplaceholder.typicode.com/todos/1";
-            var sharedClient = new HttpClient();
-            var result = await sharedClient.GetAsync(baseAddress);
-            var obj = result.Content.ReadFromJsonAsync<TestResult>();
-            return Ok(obj.Result);
-        }
-
-        [Route("test")]
-        [HttpGet]
-        public IActionResult GetTest()
-        {
-            /*var baseAddress = "http://ip.jsontest.com/?callback=showMyIP";
-            var sharedClient = new HttpClient()
+            try
             {
-                BaseAddress = new Uri(baseAddress),
-            };
-            return await sharedClient.GetAsync("baseAddress").Result.EnsureSuccessStatusCode().Content.ReadAsStringAsync();*/
-            var _context = new BetUpContext();
-            var result = String.Empty;
-            foreach (var role in _context.Roles)
-            {
-                result += role.Name.Trim() + role.Description;
+                var paribetUrl = _configuration.GetSection("BookmakerUrl").GetSection("Paribet").Value; ;
+                var result = _generateModelService.GetModelFromRequestAsync<MatchModel>(paribetUrl).Result;
+                return Ok();
             }
-            return Ok(new{ result = result});
-        }
-
-        public class Data
-        {
-            public string x { get; set; }
-            public string y { get; set; }
-        }
-
-        [Route("test")]
-        [HttpPost]
-        public IActionResult PostTest(Data data)
-        {
-            return Ok(new { inputArg = new { x = data.x, y = data.y } });
-        }
-
-        [Route("testRepository")]
-        [HttpPost]
-        public IActionResult PostTest()
-        {
-            //br.Create(new Role { Id = Guid.NewGuid(), Name = "Admin"});
-            var r = _baseRepTest.Get(new Guid("c7dac36c-620d-4bfe-9cfc-c937f26eafcc"));
-            return Ok();
+            //Добавить больше кэтчей для разных типов исключений
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }
