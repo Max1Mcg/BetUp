@@ -55,7 +55,7 @@ namespace WebApiBetsBot.Controllers
         {
             try
             {
-                var paribetUrl = _configuration.GetSection("BookmakerUrl").GetSection("Paribet").Value; ;
+                var paribetUrl = _configuration.GetSection("BookmakerUrl").GetSection("Paribet").Value;
                 var result = _generateModelService.GetModelFromRequestAsync<MatchModel>(paribetUrl).Result;
                 return Ok();
             }

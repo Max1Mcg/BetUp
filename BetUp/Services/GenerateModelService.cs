@@ -25,21 +25,11 @@ namespace BetUp.Services
         public async Task<MatchModel> GetModelFromRequestAsync<T>(string baseURL)
         {
             var response = await _requestService.GetResponseDataAsync(baseURL);
-            JToken responseObject = JToken.Parse(response);
             var jsonResult = new MatchModel() {
                 //TODO Работающий пример, остальные члены были тестовые, надо удалить
                 OddsPlayer1 = new JsonSingleElement<double>() { JsonPath = "events.[0].markets.[0].rows.[1].cells.[1].value" },
             };
-            if (responseObject.Type == JTokenType.Array)
-            {
-                var jsonArray = JArray.Parse(response);
-                _jsonToModelConvertService.FillMatchModel(ref jsonResult, jsonArray: jsonArray);
-            }
-            else if (responseObject.Type == JTokenType.Object)
-            {
-                var jsonObject = JObject.Parse(response);
-                _jsonToModelConvertService.FillMatchModel(ref jsonResult, jsonObject: jsonObject);
-            }
+            _jsonToModelConvertService.FillMatchModel(ref jsonResult, response);
             return jsonResult;
         }
     }
