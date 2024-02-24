@@ -11,11 +11,11 @@ namespace BetUp.Services
         {
             if (jsonArray != null)
             {
-                jsonResult.OddsPlayer1.JsonValue = jsonArray.SelectToken(jsonResult.OddsPlayer1.JsonPath)?.ToString();
+                jsonResult.OddsPlayer1.JsonValue = Convert.ToDouble(jsonArray.SelectToken(jsonResult.OddsPlayer1.JsonPath)?.ToString());
             }
             else if (jsonObject != null)
             {
-                jsonResult.OddsPlayer1.JsonValue = jsonObject.SelectToken(jsonResult.OddsPlayer1.JsonPath)?.ToString();
+                jsonResult.OddsPlayer1.JsonValue = Convert.ToDouble(jsonObject.SelectToken(jsonResult.OddsPlayer1.JsonPath)?.ToString());
             }
         }
     }

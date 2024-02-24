@@ -28,7 +28,7 @@ namespace BetUp.Services
             JToken responseObject = JToken.Parse(response);
             var jsonResult = new MatchModel() {
                 //TODO Работающий пример, остальные члены были тестовые, надо удалить
-                OddsPlayer1 = new JsonSingleElement() { JsonPath = "events.[0].markets.[0].rows.[1].cells.[1].value" },
+                OddsPlayer1 = new JsonSingleElement<double>() { JsonPath = "events.[0].markets.[0].rows.[1].cells.[1].value" },
             };
             if (responseObject.Type == JTokenType.Array)
             {
