@@ -11,6 +11,9 @@ using BetUp.Helpers;
 using BetUp.Services;
 using Microsoft.Extensions.Configuration;
 using BetUp.Services.IServices;
+using BetUp.Repositories.IRepositories;
+using BetUp.Repositories;
+using QuartzApp.Jobs;
 
 namespace WebApiBetsBot.Controllers
 {
@@ -18,49 +21,149 @@ namespace WebApiBetsBot.Controllers
     [Route("[controller]")]
     public class OddsController : ControllerBase
     {
-        private IConfiguration _configuration;
-        public IBaseRepository<Role> _baseRepTest;
-        private IGenerateModelService _generateModelService;
+        private IGenerateModelService<PariBetClient> _generateModelService;
+        private IGenerateModelService<WinlineClient> _generateModelWinlineService;
+        private readonly ISaveModelService _saveModelService;
         public OddsController(
-            IBaseRepository<Role> baseRepTest, 
-            IConfiguration configuration,
-            IGenerateModelService generateModelService)
+            IGenerateModelService<PariBetClient> generateModelService,
+            IGenerateModelService<WinlineClient> generateModelWinlineService,
+            ISaveModelService saveModelService)
         {
-            _baseRepTest = baseRepTest;
-            _configuration = configuration;
             _generateModelService = generateModelService;
+            _generateModelWinlineService = generateModelWinlineService;
+            _saveModelService = saveModelService;
         }
 
+        //Тест начала работы планировщика
+        //EmailScheduler.Start();
         [Route("[action]")]
-        [HttpGet]
-        public async Task<string> GetOdds()
+        [HttpPost]
+        public void StartScheduler()
         {
-            var baseAddress = "https://line02.pb06e2-resources.com/line/desktop/topEvents3?place=live&sysId=1&lang=ru&salt=d18uahshv2lrxncnd5&supertop=4&scopeMarket=2300";
-            var sharedClient = new HttpClient()
-            {
-                BaseAddress = new Uri(baseAddress),
-            };
-            //sharedClient.DefaultRequestHeaders.Add("Accept", "*/*");
-            //sharedClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            //sharedClient.DefaultRequestHeaders.Add("Accept-Encoding", "gzip, deflate, br");
-            //sharedClient.DefaultRequestHeaders.Add("Host", "line02.pb06e2-resources.com");
-            //sharedClient.DefaultRequestHeaders.Add("Cookie", "_egb_session=eERMbXJHZEhFZDZrdGk4dWNvZ0kwZnNZY0cyTUJFRTJlSTVVOGhSaTVEcW9kVTdVVE1KZDduUllNdUFOYmpxc3Y3VlFrQldpMjFlYisxNUhSaXZPeHJiLytYWUdwMzRFbGZMbWN1T0NYMWJmdWdUMEpwaVhRZndSajRDYUJ5cHM1UnZPakplSEpOZyt4M1JUdy96M1RnODhHWmY2eDR1R3hRWlM2c0tmNmp6ZnVha3dOc2VPQ2xMeEcwVWhac3ZOVVJuS3lnT0NtTTZaNlcvcGtaV090THRNM2dQUjRLTElRblVhNGZQM1h2MUc3T0hZZ3hNaG5aSU9ScGljTitkc0NDYlJrOHNmalZjOTdkaWIzYzVzbXc5M3dMeUJaN3NVYjlqM1hxOXczMCtzOENlbmk0R1A1RUVlMFdGZWtGT2hCTTZieEN1S2xMeVArQXE1M1Voc1RBPT0tLTk0YVdpd0IycnZsZEJPYkhwM2tCUUE9PQ%3D%3D--2cf0b1535e943054a31310ff1eaa4e5f46fa163b; cloudflare_uid=MoEbA1oyg--Kfy32CRSeYx-2QaPSbFyyGN2azc4j; is_first_time=1; referer=");
-            //sharedClient.DefaultRequestHeaders.Add("Connection", "keep-alive");
-            return await sharedClient.GetAsync("baseAddress").Result.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
+            EmailScheduler.Start();
         }
 
+
+        //PARI
         [Route("[action]")]
-        [HttpGet]
-        public async Task<IActionResult> GetPariMatchesAsync()
+        [HttpPost]
+        public async Task<object> AddPariMatchAsync()
         {
             try
             {
-                var paribetUrl = _configuration.GetSection("BookmakerUrl").GetSection("Paribet").Value;
-                var result = _generateModelService.GetModelFromRequestAsync<MatchModel>(paribetUrl).Result;
+                var matchModels = await _generateModelService.GetMatchFromRequestAsync();
+                _saveModelService.AddModels(matchModels);
+                return Ok(matchModels);
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        // Winline
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<object> AddWinlineMatchAsync()
+        {
+            try
+            {
+                var matchModels = await _generateModelWinlineService.GetMatchFromRequestAsync();
+                _saveModelService.AddModels(matchModels);
+                return Ok(matchModels);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        // FON.BET
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<object> AddFonbetMatchAsync()
+        {
+            try
+            {
+                //var matchModel = await _generateModelWinlineService.GetMatchFromRequestAsync(null);
+                //_saveModelService.AddModel(matchModel);
+                //return Ok(matchModel);
+
                 return Ok();
             }
-            //Добавить больше кэтчей для разных типов исключений
-            catch(Exception e)
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        // LEON
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<object> AddLeonMatchAsync()
+        {
+            try
+            {
+                //var matchModel = await _generateModelWinlineService.GetMatchFromRequestAsync(null);
+                //_saveModelService.AddModel(matchModel);
+                //return Ok(matchModel);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        // LigaStavok
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<object> AddLigaStavokMatchAsync()
+        {
+            try
+            {
+                //var matchModel = await _generateModelWinlineService.GetMatchFromRequestAsync(null);
+                //_saveModelService.AddModel(matchModel);
+                //return Ok(matchModel);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        // OlympBet
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<object> AddOlympBetMatchAsync()
+        {
+            try
+            {
+                //var matchModel = await _generateModelWinlineService.GetMatchFromRequestAsync(null);
+                //_saveModelService.AddModel(matchModel);
+                //return Ok(matchModel);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+
+        [Route("[action]")]
+        [HttpGet]
+        public async Task<object> GetMatchAsync(Guid id)
+        {
+            try
+            {
+                return _saveModelService.GetModel(id);
+            }
+            catch (Exception e)
             {
                 return BadRequest(e.Message);
             }

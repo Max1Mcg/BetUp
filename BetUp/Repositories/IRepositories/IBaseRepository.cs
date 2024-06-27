@@ -6,6 +6,7 @@ namespace MarketPlace.Repositories.Interfaces
     public interface IBaseRepository<T>
     {
         public Task Create(T entity);
+        public Task CreateRange(IEnumerable<T> entity);
         public Task Update(T entity);
         public Task Delete(object id);
         public T? Get(object id);

@@ -17,10 +17,11 @@ public partial class BetUpContext : DbContext
     }
 
     public virtual DbSet<Role> Roles { get; set; }
+    public virtual DbSet<Match> Matches { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    /*protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Role>(entity =>
         {
@@ -37,5 +38,5 @@ public partial class BetUpContext : DbContext
         OnModelCreatingPartial(modelBuilder);
     }
 
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);*/
 }

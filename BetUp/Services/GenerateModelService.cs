@@ -6,31 +6,27 @@ using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json.Nodes;
 using System.Net;
 using BetUp.Services.IServices;
+using BetUp.HttpClients.Interfaces;
 
 namespace BetUp.Services
 {
-    public class GenerateModelService: IGenerateModelService
+    public class GenerateModelService<T>: IGenerateModelService<T> where T: IClient
     {
-        private IRequestService _requestService;
         private IJsonToModelConvertService _jsonToModelConvertService;
+        private readonly T _client;
 
         public GenerateModelService(
-            IRequestService requestService,
-            IJsonToModelConvertService jsonToModelConvertService) 
+            IJsonToModelConvertService jsonToModelConvertService,
+            T client )
         {
-            _requestService = requestService;
             _jsonToModelConvertService = jsonToModelConvertService;
+            _client = client;
         }
 
-        public async Task<MatchModel> GetModelFromRequestAsync<T>(string baseURL)
+        public async Task<List<MatchModel>> GetMatchFromRequestAsync()
         {
-            var response = await _requestService.GetResponseDataAsync(baseURL);
-            var jsonResult = new MatchModel() {
-                //TODO Работающий пример, остальные члены были тестовые, надо удалить
-                OddsPlayer1 = new JsonSingleElement<double>() { JsonPath = "events.[0].markets.[0].rows.[1].cells.[1].value" },
-            };
-            _jsonToModelConvertService.FillMatchModel(ref jsonResult, response);
-            return jsonResult;
+            var matchModels = await _client.GetMatches();
+            return matchModels;
         }
     }
 }
