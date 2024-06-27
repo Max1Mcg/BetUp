@@ -1,10 +1,11 @@
-﻿using BetUp.Models;
+﻿using BetUp.HttpClients.Interfaces;
+using BetUp.Models;
 using Newtonsoft.Json.Linq;
 
 namespace BetUp.Services.IServices
 {
-    public interface IGenerateModelService
+    public interface IGenerateModelService<T>
     {
-        public Task<MatchModel> GetModelFromRequestAsync<T>(string baseURL);
+        Task<List<MatchModel>> GetMatchFromRequestAsync();
     }
 }

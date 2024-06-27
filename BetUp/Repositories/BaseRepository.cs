@@ -1,34 +1,52 @@
-﻿using BetUp.DbContexts;
+﻿using BetUp.CommonInterfaces;
+using BetUp.DbContexts;
+using BetUp.Logger.Interfaces;
 using MarketPlace.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace MarketPlace.Repositories.Base
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    public class BaseRepository<T> : IBaseRepository<T> where T : BaseObject
     {
         protected readonly BetUpContext _context;
         protected readonly DbSet<T> _set;
-        public BaseRepository(BetUpContext context)
+        private readonly ILoggerActions _loggerActions;
+        public BaseRepository(BetUpContext context,
+            ILoggerActions logger)
         {
             _context = context;
             _set = _context.Set<T>();
+            _loggerActions = logger;
         }
+
         public async Task Create(T entity)
         {
             _context.Add(entity);
             await _context.SaveChangesAsync();
+            _loggerActions.LogOperation("Create", typeof(T).ToString(), entity.Id);
         }
+
+        public async Task CreateRange(IEnumerable<T> entityCollection)
+        {
+            _context.AddRange(entityCollection);
+            await _context.SaveChangesAsync();
+            _loggerActions.LogOperation("CreateRange", typeof(T).ToString(), Guid.Empty);
+        }
+
         public async Task Update(T entity)
         {
             _context.Update(entity);
             await _context.SaveChangesAsync();
+            _loggerActions.LogOperation("Update", typeof(T).ToString(), entity.Id);
         }
+
         public async Task Delete(object id)
         {
             _set.Remove(await _set.FindAsync(id));
             await _context.SaveChangesAsync();
+            _loggerActions.LogOperation("Delete", typeof(T).ToString(), (Guid)id);
         }
-        //доработать чтобы можно было подтягивать сущности + указывать columnsToFetch
+
         public T? Get(object id)
         {
             var item = _set.Find(id);
