@@ -5,7 +5,8 @@
 //4)Развертывание
 //5)docker + k8s + redis
 //6)gitlab ci/cd
-//7)Ну и получение данных :)
+//7)rabbitmq/kafka - подумать только для чего
+//8)Ну и получение данных :)
 
 using BetUp.DbContexts;
 using BetUp.DbModels;
