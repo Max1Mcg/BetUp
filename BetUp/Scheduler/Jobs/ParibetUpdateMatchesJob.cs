@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace QuartzApp.Jobs
 {
-    public class EmailSender : IJob
+    public class ParibetUpdateMatchesJob : IJob
     {
         IGenerateModelService<PariBetClient> _generateModelService;
         ISaveModelService _saveModelService;
-        public EmailSender(IGenerateModelService<PariBetClient> generateModelService,
+        public ParibetUpdateMatchesJob(IGenerateModelService<PariBetClient> generateModelService,
             ISaveModelService saveModelService) {
             _generateModelService = generateModelService;
             _saveModelService = saveModelService;
@@ -19,7 +19,7 @@ namespace QuartzApp.Jobs
         public async Task Execute(IJobExecutionContext context)
         {
             var matchModels = await _generateModelService.GetMatchFromRequestAsync();
-            _saveModelService.AddModels(matchModels);
+            await _saveModelService.AddModels(matchModels);
         }
     }
 }

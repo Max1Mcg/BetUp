@@ -24,15 +24,12 @@ using Quartz;
 using BetUp.Logger.Interfaces;
 using BetUp.Logger;
 
-System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-//db context
+
 builder.Services.AddDbContext<BetUpContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("BetUpDb")));
 
 builder.Services.AddScoped<ILoggerActions, LoggerActions>();
@@ -64,26 +61,23 @@ builder.Services.AddHttpClient<WinlineClient>(
         //ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => { return true; }
     });
 
-//QUARTZ
 builder.Services.AddQuartz(q =>
 {
     q.UseMicrosoftDependencyInjectionJobFactory();
-    // Just use the name of your job that you created in the Jobs folder.
-    var jobKey = new JobKey("SendEmailJob");
+    var updateMatchesJob = new JobKey("updateMatchesJob");
 
-    q.AddJob<EmailSender>(opts => opts.WithIdentity(jobKey));
+    q.AddJob<ParibetUpdateMatchesJob>(opts => opts.WithIdentity(updateMatchesJob));
 
     q.AddTrigger(opts => opts
-        .ForJob(jobKey)
-        .WithIdentity("trigger1", "group1")     // идентифицируем триггер с именем и группой
-                .StartAt(new DateTimeOffset(DateTime.UtcNow).AddSeconds(5))                            // запуск сразу после начала выполнения
-                .WithSimpleSchedule(x => x            // настраиваем выполнение действия
-                    .WithIntervalInSeconds(20)          // через 1 минуту
-                    .RepeatForever())                   // бесконечное повторение
+        .ForJob(updateMatchesJob)
+        .WithIdentity("trigger1", "group1")
+                .StartAt(new DateTimeOffset(DateTime.UtcNow).AddSeconds(5))
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInSeconds(20)
+                    .RepeatForever())
     );
 });
 
-//activate Scheduler
 builder.Services.AddQuartzHostedService(qService => qService.AwaitApplicationStarted = true);
 
 
@@ -96,9 +90,6 @@ builder.Services.AddQuartzHostedService(qService => qService.AwaitApplicationSta
 
 var app = builder.Build();
 
-
-
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

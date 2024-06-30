@@ -21,7 +21,7 @@ namespace WebApiBetsBot.Controllers
     [Route("[controller]")]
     public class OddsController : ControllerBase
     {
-        private IGenerateModelService<PariBetClient> _generateModelService;
+        private IGenerateModelService<PariBetClient> _generateModelParibetService;
         private IGenerateModelService<WinlineClient> _generateModelWinlineService;
         private readonly ISaveModelService _saveModelService;
         public OddsController(
@@ -29,20 +29,10 @@ namespace WebApiBetsBot.Controllers
             IGenerateModelService<WinlineClient> generateModelWinlineService,
             ISaveModelService saveModelService)
         {
-            _generateModelService = generateModelService;
+            _generateModelParibetService = generateModelService;
             _generateModelWinlineService = generateModelWinlineService;
             _saveModelService = saveModelService;
         }
-
-        //Тест начала работы планировщика
-        //EmailScheduler.Start();
-        [Route("[action]")]
-        [HttpPost]
-        public void StartScheduler()
-        {
-            EmailScheduler.Start();
-        }
-
 
         //PARI
         [Route("[action]")]
@@ -51,7 +41,7 @@ namespace WebApiBetsBot.Controllers
         {
             try
             {
-                var matchModels = await _generateModelService.GetMatchFromRequestAsync();
+                var matchModels = await _generateModelParibetService.GetMatchFromRequestAsync();
                 _saveModelService.AddModels(matchModels);
                 return Ok(matchModels);
             }

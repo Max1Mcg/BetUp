@@ -4,6 +4,6 @@ namespace BetUp.HttpClients.Interfaces
 {
     public interface IClient
     {
-        Task<List<MatchModel>> GetMatches();
+        Task<string> GetMatches();
     }
 }

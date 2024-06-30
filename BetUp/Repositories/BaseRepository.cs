@@ -2,6 +2,7 @@
 using BetUp.DbContexts;
 using BetUp.Logger.Interfaces;
 using MarketPlace.Repositories.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 
 namespace MarketPlace.Repositories.Base
@@ -21,6 +22,8 @@ namespace MarketPlace.Repositories.Base
 
         public async Task Create(T entity)
         {
+            entity.CreatedOn = DateTime.UtcNow;
+            entity.ModifiedOn = DateTime.UtcNow;
             _context.Add(entity);
             await _context.SaveChangesAsync();
             _loggerActions.LogOperation("Create", typeof(T).ToString(), entity.Id);
@@ -28,6 +31,7 @@ namespace MarketPlace.Repositories.Base
 
         public async Task CreateRange(IEnumerable<T> entityCollection)
         {
+            entityCollection = entityCollection.Select(entity => { entity.CreatedOn = DateTime.UtcNow; entity.ModifiedOn = DateTime.UtcNow; return entity; });
             _context.AddRange(entityCollection);
             await _context.SaveChangesAsync();
             _loggerActions.LogOperation("CreateRange", typeof(T).ToString(), Guid.Empty);
@@ -35,6 +39,7 @@ namespace MarketPlace.Repositories.Base
 
         public async Task Update(T entity)
         {
+            entity.ModifiedOn = DateTime.UtcNow;
             _context.Update(entity);
             await _context.SaveChangesAsync();
             _loggerActions.LogOperation("Update", typeof(T).ToString(), entity.Id);

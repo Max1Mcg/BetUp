@@ -3,6 +3,7 @@ using BetUp.Models;
 using BetUp.Services;
 using BetUp.Services.IServices;
 using Microsoft.Extensions.Configuration;
+using System.Drawing;
 
 public class WinlineClient : IClient
 {
@@ -17,21 +18,11 @@ public class WinlineClient : IClient
         _jsonToModelConvertService = jsonToModelConvertService;
         _configuration = configuration;
     }
-    public async Task<List<MatchModel>> GetMatches()
+    public async Task<string> GetMatches()
     {
         var clientUrl = _configuration.GetSection("BookmakerUrl").GetSection("Winline").Value;
         var response = await _client.GetAsync(clientUrl);
         var responseBody = await response.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
-        //TODO подумать как взять массив матчей
-        var matchModels = new List<MatchModel>();
-        var matchModel = new MatchModel()
-        {
-            OddsPlayer1 = new JsonSingleElement<double>() { JsonPath = "events.[0].markets.[0].rows.[1].cells.[1].value" },
-            OddsPlayer2 = new JsonSingleElement<double>() { JsonPath = "events.[0].markets.[0].rows.[1].cells.[1].value" },
-            Player1Name = new JsonSingleElement<string>() { JsonPath = "events.[0].markets.[0].rows.[0].cells.[1].caption" },
-            Player2Name = new JsonSingleElement<string>() { JsonPath = "events.[0].markets.[0].rows.[0].cells.[3].caption" }
-        };
-        _jsonToModelConvertService.FillMatchModel(ref matchModel, responseBody);
-        return matchModels;
+        return responseBody;
     }
 }

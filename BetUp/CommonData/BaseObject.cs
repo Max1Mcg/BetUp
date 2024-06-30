@@ -7,5 +7,10 @@ namespace BetUp.CommonInterfaces
         public Guid Id { get; set; }
         public DateTime? CreatedOn { get; set; }
         public DateTime? ModifiedOn { get; set; }
+        public BaseObject()
+        {
+            //CreatedOn = CreatedOn ?? DateTime.Now;
+            //ModifiedOn = DateTime.Now;
+        }
     }
 }

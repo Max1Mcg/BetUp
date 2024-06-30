@@ -21,6 +21,7 @@ public partial class BetUpContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
+
     /*protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Role>(entity =>

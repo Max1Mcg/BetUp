@@ -5,7 +5,7 @@ namespace BetUp.Services.IServices
 {
     public interface ISaveModelService
     {
-        void AddModels(List<MatchModel> matchModel);
+        Task AddModels(List<MatchModel> matchModel);
         public Task<Match> GetModel(Guid id);
     }
 }
