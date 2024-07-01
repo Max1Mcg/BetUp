@@ -39,7 +39,7 @@ namespace WebApiBetsBot.Controllers
             _baseRepository = baseRepository;
         }
 
-        //TEST
+        //TEST1
         [Route("[action]")]
         [HttpPost]
         public async Task<object> TEST()
