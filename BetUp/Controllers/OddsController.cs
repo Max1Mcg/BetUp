@@ -14,6 +14,7 @@ using BetUp.Services.IServices;
 using BetUp.Repositories.IRepositories;
 using BetUp.Repositories;
 using QuartzApp.Jobs;
+using System.Diagnostics;
 
 namespace WebApiBetsBot.Controllers
 {
@@ -24,14 +25,34 @@ namespace WebApiBetsBot.Controllers
         private IGenerateModelService<PariBetClient> _generateModelParibetService;
         private IGenerateModelService<WinlineClient> _generateModelWinlineService;
         private readonly ISaveModelService _saveModelService;
+        //TODO for test repository
+        private readonly IBaseRepository<BKTeam> _baseRepository;
         public OddsController(
             IGenerateModelService<PariBetClient> generateModelService,
             IGenerateModelService<WinlineClient> generateModelWinlineService,
-            ISaveModelService saveModelService)
+            ISaveModelService saveModelService,
+            IBaseRepository<BKTeam> baseRepository)
         {
             _generateModelParibetService = generateModelService;
             _generateModelWinlineService = generateModelWinlineService;
             _saveModelService = saveModelService;
+            _baseRepository = baseRepository;
+        }
+
+        //TEST
+        [Route("[action]")]
+        [HttpPost]
+        public async Task<object> TEST()
+        {
+            try
+            {
+                await _baseRepository.Create(new BKTeam { ForeignTeamId = "123", LocalTeam = new Team {Id = new Guid("00000000-0000-0000-0000-000000000000") }, Bk = new BK { Id = new Guid("00000000-0000-0000-0000-000000000002"), Name = "test0000" } });
+                return Ok(new object());
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         //PARI

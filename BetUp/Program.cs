@@ -36,6 +36,7 @@ builder.Services.AddScoped<ILoggerActions, LoggerActions>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<ISaveModelService, SaveModelService>();
 builder.Services.AddScoped<IBaseRepository<Role>, BaseRepository<Role>>();
+builder.Services.AddScoped<IBaseRepository<BKTeam>, BaseRepository<BKTeam>>();
 builder.Services.AddScoped<IGenerateModelService<PariBetClient>, GenerateModelService<PariBetClient>>();
 builder.Services.AddScoped<IGenerateModelService<WinlineClient>, GenerateModelService<WinlineClient>>();
 builder.Services.AddScoped<IJsonToModelConvertService, JsonToModelConvertService>();

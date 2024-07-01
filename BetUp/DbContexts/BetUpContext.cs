@@ -14,30 +14,15 @@ public partial class BetUpContext : DbContext
     public BetUpContext(DbContextOptions<BetUpContext> options)
         : base(options)
     {
+        //Database.EnsureDeleted();
     }
 
     public virtual DbSet<Role> Roles { get; set; }
     public virtual DbSet<Match> Matches { get; set; }
+    public virtual DbSet<BKTeam> BKTeams { get; set; }
+    public virtual DbSet<Team> Teams { get; set; }
+    public virtual DbSet<BK> BKs { get; set; }
+    public virtual DbSet<BKMatch> BKMatches { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
-
-
-    /*protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<Role>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("Role_pkey");
-
-            entity.ToTable("Role");
-
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.Name)
-                .HasMaxLength(50)
-                .IsFixedLength();
-        });
-
-        OnModelCreatingPartial(modelBuilder);
-    }
-
-    partial void OnModelCreatingPartial(ModelBuilder modelBuilder);*/
 }

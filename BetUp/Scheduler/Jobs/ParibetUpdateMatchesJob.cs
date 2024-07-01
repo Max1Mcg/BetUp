@@ -18,8 +18,8 @@ namespace QuartzApp.Jobs
 
         public async Task Execute(IJobExecutionContext context)
         {
-            var matchModels = await _generateModelService.GetMatchFromRequestAsync();
-            await _saveModelService.AddModels(matchModels);
+            //var matchModels = await _generateModelService.GetMatchFromRequestAsync();
+            //await _saveModelService.AddModels(matchModels);
         }
     }
 }
