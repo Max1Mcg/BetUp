@@ -11,6 +11,8 @@ namespace BetUp.DbModels
         public double? Player1Odds { get; set; }
 
         public double? Player2Odds { get; set; }
+        public Team LocalTeam1 { get; set; }
+        public Team LocalTeam2 { get; set; }
 
         public DateTime? Time { get; set; }
 

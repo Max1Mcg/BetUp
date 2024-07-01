@@ -47,7 +47,8 @@ namespace BetUp.Services
             ]
         }";
 
-            //var matches = await _client.GetMatches();
+            //Для тестов без инета - заменить mathces на mockJson
+            var matches = await _client.GetMatches();
 
             var mockMatchPath = "matches";
 
@@ -59,7 +60,7 @@ namespace BetUp.Services
             mockAttributesPaths.Add("NamePlayer1", "p1");
             mockAttributesPaths.Add("NamePlayer2", "p2");
 
-            var matchesCount = _jsonToModelConvertService.GetArrayLength(mockMatchPath, mockJson);
+            var matchesCount = _jsonToModelConvertService.GetArrayLength(mockMatchPath, matches);
 
             MatchModel mockModel;
 
@@ -72,7 +73,7 @@ namespace BetUp.Services
                     NamePlayer1 = new JsonSingleElement<string>() { JsonPath = $"matches[{i}].{mockAttributesPaths["NamePlayer1"]}" },
                     NamePlayer2 = new JsonSingleElement<string>() { JsonPath = $"matches[{i}].{mockAttributesPaths["NamePlayer2"]}" }
                 };
-                _jsonToModelConvertService.FillMatchModel(ref mockModel, mockJson);
+                _jsonToModelConvertService.FillMatchModel(ref mockModel, matches);
                 matchModels.Add(mockModel);
             }
             return matchModels;
