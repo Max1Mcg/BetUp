@@ -10,5 +10,7 @@ namespace MarketPlace.Repositories.Interfaces
         public Task Update(T entity);
         public Task Delete(object id);
         public T? Get(object id);
+        TEntity GetById<TEntity>(Guid id) where TEntity : class;
+        IEnumerable<TEntity> GetAll<TEntity>() where TEntity : class;
     }
 }

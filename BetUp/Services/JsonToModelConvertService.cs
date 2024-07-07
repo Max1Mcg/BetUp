@@ -37,6 +37,9 @@ namespace BetUp.Services
                 jsonResult.OddsPlayer2.JsonValue = Convert.ToDouble(jsonArray.SelectToken(jsonResult.OddsPlayer2.JsonPath)?.ToString());
                 jsonResult.NamePlayer1.JsonValue = Convert.ToString(jsonArray.SelectToken(jsonResult.NamePlayer1.JsonPath)?.ToString());
                 jsonResult.NamePlayer2.JsonValue = Convert.ToString(jsonArray.SelectToken(jsonResult.NamePlayer2.JsonPath)?.ToString());
+                jsonResult.Player1Id.JsonValue = Convert.ToString(jsonArray.SelectToken(jsonResult.Player1Id.JsonPath)?.ToString());
+                jsonResult.Player2Id.JsonValue = Convert.ToString(jsonArray.SelectToken(jsonResult.Player2Id.JsonPath)?.ToString());
+                jsonResult.MatchId.JsonValue = Convert.ToString(jsonArray.SelectToken(jsonResult.MatchId.JsonPath)?.ToString());
             }
             else if (responseObject.Type == JTokenType.Object)
             {
@@ -45,6 +48,9 @@ namespace BetUp.Services
                 jsonResult.OddsPlayer2.JsonValue = Convert.ToDouble(jsonObject.SelectToken(jsonResult.OddsPlayer2.JsonPath)?.ToString());
                 jsonResult.NamePlayer1.JsonValue = Convert.ToString(jsonObject.SelectToken(jsonResult.NamePlayer1.JsonPath)?.ToString());
                 jsonResult.NamePlayer2.JsonValue = Convert.ToString(jsonObject.SelectToken(jsonResult.NamePlayer2.JsonPath)?.ToString());
+                jsonResult.Player1Id.JsonValue = Convert.ToString(jsonObject.SelectToken(jsonResult.Player1Id.JsonPath)?.ToString());
+                jsonResult.Player2Id.JsonValue = Convert.ToString(jsonObject.SelectToken(jsonResult.Player2Id.JsonPath)?.ToString());
+                jsonResult.MatchId.JsonValue = Convert.ToString(jsonObject.SelectToken(jsonResult.MatchId.JsonPath)?.ToString());
             }
         }
     }

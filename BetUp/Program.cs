@@ -23,6 +23,8 @@ using System.Net;
 using Quartz;
 using BetUp.Logger.Interfaces;
 using BetUp.Logger;
+using BetUp.CommonInterfaces;
+using BetUp.Validators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,11 +34,18 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<BetUpContext>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("BetUpDb")));
 
+builder.Services.AddScoped<IMappingValidator, MappingValidator>();
 builder.Services.AddScoped<ILoggerActions, LoggerActions>();
+builder.Services.AddScoped<IBaseRepository<Match>, BaseRepository<Match>>();
+builder.Services.AddScoped<IBaseRepository<BKMatch>, BaseRepository<BKMatch>>();
+builder.Services.AddScoped<IBaseRepository<BKTeam>, BaseRepository<BKTeam>>();
+builder.Services.AddScoped<IBaseRepository<Team>, BaseRepository<Team>>();
+builder.Services.AddScoped<IBaseRepository<BaseObject>, BaseRepository<BaseObject>>();
+builder.Services.AddScoped<ITeamMappingRepository, TeamMappingRepository>();
 builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddScoped<ISaveModelService, SaveModelService>();
 builder.Services.AddScoped<IBaseRepository<Role>, BaseRepository<Role>>();
-builder.Services.AddScoped<IBaseRepository<BKTeam>, BaseRepository<BKTeam>>();
+builder.Services.AddScoped<IBaseRepository<Match>, BaseRepository<Match>>();
 builder.Services.AddScoped<IGenerateModelService<PariBetClient>, GenerateModelService<PariBetClient>>();
 builder.Services.AddScoped<IGenerateModelService<WinlineClient>, GenerateModelService<WinlineClient>>();
 builder.Services.AddScoped<IJsonToModelConvertService, JsonToModelConvertService>();
@@ -74,7 +83,7 @@ builder.Services.AddQuartz(q =>
         .WithIdentity("trigger1", "group1")
                 .StartAt(new DateTimeOffset(DateTime.UtcNow).AddSeconds(5))
                 .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(20)
+                    .WithIntervalInMinutes(1)
                     .RepeatForever())
     );
 });

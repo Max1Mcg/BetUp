@@ -3,6 +3,7 @@ using System;
 using BetUp.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BetUp.Migrations
 {
     [DbContext(typeof(BetUpContext))]
-    partial class BetUpContextModelSnapshot : ModelSnapshot
+    [Migration("20240707103838_DeleteLocal")]
+    partial class DeleteLocal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,6 +79,9 @@ namespace BetUp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("BkId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
@@ -91,6 +97,8 @@ namespace BetUp.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BkId");
 
                     b.ToTable("BKTeams");
                 });
@@ -255,6 +263,17 @@ namespace BetUp.Migrations
                         .IsUnique();
 
                     b.ToTable("TeamMapping");
+                });
+
+            modelBuilder.Entity("BetUp.DbModels.BKTeam", b =>
+                {
+                    b.HasOne("BetUp.DbModels.BK", "Bk")
+                        .WithMany()
+                        .HasForeignKey("BkId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Bk");
                 });
 
             modelBuilder.Entity("BetUp.DbModels.Match", b =>

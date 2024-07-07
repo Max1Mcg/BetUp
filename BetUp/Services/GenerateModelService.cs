@@ -23,8 +23,9 @@ namespace BetUp.Services
             _client = client;
         }
 
-        public async Task<List<MatchModel>> GetMatchFromRequestAsync()
+        public async Task<List<MatchModel>> GetMatchFromRequestAsync(string matchPath, Dictionary<string, string> attributePaths)
         {
+            //mock data without Inthernet
             string mockJson = @"
         {
             ""id"": 1,
@@ -46,32 +47,35 @@ namespace BetUp.Services
                 {""p1"": ""bb"", ""p2"": ""gg"", ""o1"": 1.25, ""o2"": 3.75}
             ]
         }";
+            var mockLimit = 5;
+            /*var mockMatchPath = "matches";
 
-            //Для тестов без инета - заменить mathces на mockJson
-            var matches = await _client.GetMatches();
-
-            var mockMatchPath = "matches";
-
-            //TODO считывать из конфигов, чтобы пути можно было настраивать из конфигурации
-            var matchModels = new List<MatchModel>();
             var mockAttributesPaths = new Dictionary<string, string>();
             mockAttributesPaths.Add("OddsPlayer1", "o1");
             mockAttributesPaths.Add("OddsPlayer2", "o2");
             mockAttributesPaths.Add("NamePlayer1", "p1");
-            mockAttributesPaths.Add("NamePlayer2", "p2");
+            mockAttributesPaths.Add("NamePlayer2", "p2");*/
+            //end mock
 
-            var matchesCount = _jsonToModelConvertService.GetArrayLength(mockMatchPath, matches);
+            var matches = await _client.GetMatches();
+
+            var matchModels = new List<MatchModel>();
+
+            var matchesCount = _jsonToModelConvertService.GetArrayLength(matchPath, matches);
 
             MatchModel mockModel;
 
-            for (int i = 0; i < matchesCount; i++)
+            for (int i = 0; i < Math.Min(matchesCount, mockLimit); i++)
             {
                 mockModel = new MatchModel()
                 {
-                    OddsPlayer1 = new JsonSingleElement<double>() { JsonPath = $"matches[{i}].{mockAttributesPaths["OddsPlayer1"]}" },
-                    OddsPlayer2 = new JsonSingleElement<double>() { JsonPath = $"matches[{i}].{mockAttributesPaths["OddsPlayer2"]}" },
-                    NamePlayer1 = new JsonSingleElement<string>() { JsonPath = $"matches[{i}].{mockAttributesPaths["NamePlayer1"]}" },
-                    NamePlayer2 = new JsonSingleElement<string>() { JsonPath = $"matches[{i}].{mockAttributesPaths["NamePlayer2"]}" }
+                    OddsPlayer1 = new JsonSingleElement<double>() { JsonPath = $"{matchPath}.[{i}].{attributePaths["OddsPlayer1"]}" },
+                    OddsPlayer2 = new JsonSingleElement<double>() { JsonPath = $"{matchPath}.[{i}].{attributePaths["OddsPlayer2"]}" },
+                    NamePlayer1 = new JsonSingleElement<string>() { JsonPath = $"{matchPath}.[{i}].{attributePaths["NamePlayer1"]}" },
+                    NamePlayer2 = new JsonSingleElement<string>() { JsonPath = $"{matchPath}.[{i}].{attributePaths["NamePlayer2"]}" },
+                    Player1Id = new JsonSingleElement<string>() { JsonPath = $"{matchPath}.[{i}].{attributePaths["team1Id"]}" },
+                    Player2Id = new JsonSingleElement<string>() { JsonPath = $"{matchPath}.[{i}].{attributePaths["team2Id"]}" },
+                    MatchId = new JsonSingleElement<string>() { JsonPath = $"{matchPath}.[{i}].{attributePaths["Id"]}" }
                 };
                 _jsonToModelConvertService.FillMatchModel(ref mockModel, matches);
                 matchModels.Add(mockModel);

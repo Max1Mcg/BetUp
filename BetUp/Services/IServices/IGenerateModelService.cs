@@ -6,6 +6,6 @@ namespace BetUp.Services.IServices
 {
     public interface IGenerateModelService<T>
     {
-        Task<List<MatchModel>> GetMatchFromRequestAsync();
+        Task<List<MatchModel>> GetMatchFromRequestAsync(string matchPath, Dictionary<string, string> attributePaths);
     }
 }

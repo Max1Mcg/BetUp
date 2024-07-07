@@ -3,6 +3,7 @@ using System;
 using BetUp.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BetUp.Migrations
 {
     [DbContext(typeof(BetUpContext))]
-    partial class BetUpContextModelSnapshot : ModelSnapshot
+    [Migration("20240705132059_Mapping2")]
+    partial class Mapping2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,6 +59,9 @@ namespace BetUp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("LocalMatchId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp with time zone");
 
@@ -67,6 +73,8 @@ namespace BetUp.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LocalMatchId");
+
                     b.ToTable("BKMatches");
                 });
 
@@ -76,12 +84,18 @@ namespace BetUp.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("BkId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ForeignTeamId")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid>("LocalTeamId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp with time zone");
@@ -91,6 +105,10 @@ namespace BetUp.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BkId");
+
+                    b.HasIndex("LocalTeamId");
 
                     b.ToTable("BKTeams");
                 });
@@ -156,30 +174,6 @@ namespace BetUp.Migrations
                     b.HasIndex("MatchId");
 
                     b.ToTable("MatchMapping");
-                });
-
-            modelBuilder.Entity("BetUp.DbModels.Notification", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("CreatedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsSended")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ModifiedOn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Notifications");
                 });
 
             modelBuilder.Entity("BetUp.DbModels.Role", b =>
@@ -255,6 +249,36 @@ namespace BetUp.Migrations
                         .IsUnique();
 
                     b.ToTable("TeamMapping");
+                });
+
+            modelBuilder.Entity("BetUp.DbModels.BKMatch", b =>
+                {
+                    b.HasOne("BetUp.DbModels.Match", "LocalMatch")
+                        .WithMany()
+                        .HasForeignKey("LocalMatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LocalMatch");
+                });
+
+            modelBuilder.Entity("BetUp.DbModels.BKTeam", b =>
+                {
+                    b.HasOne("BetUp.DbModels.BK", "Bk")
+                        .WithMany()
+                        .HasForeignKey("BkId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("BetUp.DbModels.Team", "LocalTeam")
+                        .WithMany()
+                        .HasForeignKey("LocalTeamId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Bk");
+
+                    b.Navigation("LocalTeam");
                 });
 
             modelBuilder.Entity("BetUp.DbModels.Match", b =>

@@ -16,8 +16,8 @@ namespace BetUp.Services
         {
             await _matchRepository.CreateRange(matchModels.Select(matchModel => new Match
             {
-                Player1Name = matchModel.NamePlayer1.JsonValue,
-                Player2Name = matchModel.NamePlayer2.JsonValue,
+                //Player1Name = matchModel.NamePlayer1.JsonValue,
+                //Player2Name = matchModel.NamePlayer2.JsonValue,
                 Player1Odds = matchModel.OddsPlayer1.JsonValue,
                 Player2Odds = matchModel.OddsPlayer2.JsonValue
             }));

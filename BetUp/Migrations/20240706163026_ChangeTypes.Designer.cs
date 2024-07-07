@@ -3,6 +3,7 @@ using System;
 using BetUp.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BetUp.Migrations
 {
     [DbContext(typeof(BetUpContext))]
-    partial class BetUpContextModelSnapshot : ModelSnapshot
+    [Migration("20240706163026_ChangeTypes")]
+    partial class ChangeTypes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,6 +59,9 @@ namespace BetUp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid>("LocalMatchId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp with time zone");
 
@@ -67,6 +73,8 @@ namespace BetUp.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LocalMatchId");
+
                     b.ToTable("BKMatches");
                 });
 
@@ -74,6 +82,9 @@ namespace BetUp.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("BkId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime?>("CreatedOn")
@@ -91,6 +102,8 @@ namespace BetUp.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BkId");
 
                     b.ToTable("BKTeams");
                 });
@@ -166,13 +179,6 @@ namespace BetUp.Migrations
 
                     b.Property<DateTime?>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsSended")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Message")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<DateTime?>("ModifiedOn")
                         .HasColumnType("timestamp with time zone");
@@ -255,6 +261,28 @@ namespace BetUp.Migrations
                         .IsUnique();
 
                     b.ToTable("TeamMapping");
+                });
+
+            modelBuilder.Entity("BetUp.DbModels.BKMatch", b =>
+                {
+                    b.HasOne("BetUp.DbModels.Match", "LocalMatch")
+                        .WithMany()
+                        .HasForeignKey("LocalMatchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("LocalMatch");
+                });
+
+            modelBuilder.Entity("BetUp.DbModels.BKTeam", b =>
+                {
+                    b.HasOne("BetUp.DbModels.BK", "Bk")
+                        .WithMany()
+                        .HasForeignKey("BkId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Bk");
                 });
 
             modelBuilder.Entity("BetUp.DbModels.Match", b =>

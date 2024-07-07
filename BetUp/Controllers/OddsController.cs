@@ -26,12 +26,12 @@ namespace WebApiBetsBot.Controllers
         private IGenerateModelService<WinlineClient> _generateModelWinlineService;
         private readonly ISaveModelService _saveModelService;
         //TODO for test repository
-        private readonly IBaseRepository<BKTeam> _baseRepository;
+        private readonly IBaseRepository<Match> _baseRepository;
         public OddsController(
             IGenerateModelService<PariBetClient> generateModelService,
             IGenerateModelService<WinlineClient> generateModelWinlineService,
             ISaveModelService saveModelService,
-            IBaseRepository<BKTeam> baseRepository)
+            IBaseRepository<Match> baseRepository)
         {
             _generateModelParibetService = generateModelService;
             _generateModelWinlineService = generateModelWinlineService;
@@ -46,7 +46,7 @@ namespace WebApiBetsBot.Controllers
         {
             try
             {
-                await _baseRepository.Create(new BKTeam { ForeignTeamId = "123", LocalTeam = new Team {Id = new Guid("00000000-0000-0000-0000-000000000000") }, Bk = new BK { Id = new Guid("00000000-0000-0000-0000-000000000002"), Name = "test0000" } });
+                await _baseRepository.Create(new Match { LocalTeam1 = null});
                 return Ok(new object());
             }
             catch (Exception e)
@@ -62,9 +62,9 @@ namespace WebApiBetsBot.Controllers
         {
             try
             {
-                var matchModels = await _generateModelParibetService.GetMatchFromRequestAsync();
-                _saveModelService.AddModels(matchModels);
-                return Ok(matchModels);
+                /*var matchModels = await _generateModelParibetService.GetMatchFromRequestAsync();
+                _saveModelService.AddModels(matchModels);*/
+                return Ok();
             }
             catch(Exception e)
             {
@@ -79,9 +79,9 @@ namespace WebApiBetsBot.Controllers
         {
             try
             {
-                var matchModels = await _generateModelWinlineService.GetMatchFromRequestAsync();
-                _saveModelService.AddModels(matchModels);
-                return Ok(matchModels);
+                /*var matchModels = await _generateModelWinlineService.GetMatchFromRequestAsync();
+                _saveModelService.AddModels(matchModels);*/
+                return Ok();
             }
             catch (Exception e)
             {

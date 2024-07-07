@@ -8,7 +8,5 @@ namespace BetUp.DbModels
 
         public double? Player2Odds { get; set; }
         public string ForeignId { get; set; }
-
-        public Match LocalMatch { get; set; }
     }
 }

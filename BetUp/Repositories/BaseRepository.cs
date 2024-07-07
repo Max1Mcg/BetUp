@@ -57,5 +57,15 @@ namespace MarketPlace.Repositories.Base
             var item = _set.Find(id);
             return item;
         }
+
+        public TEntity GetById<TEntity>(Guid id) where TEntity : class
+        {
+            return _context.Set<TEntity>().Find(id);
+        }
+
+        public IEnumerable<TEntity> GetAll<TEntity>() where TEntity : class
+        {
+            return _context.Set<TEntity>().ToList();
+        }
     }
 }
