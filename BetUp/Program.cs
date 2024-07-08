@@ -81,9 +81,26 @@ builder.Services.AddQuartz(q =>
     q.AddTrigger(opts => opts
         .ForJob(updateMatchesJob)
         .WithIdentity("trigger1", "group1")
+                .StartAt(new DateTimeOffset(DateTime.UtcNow).AddSeconds(2))
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInMinutes(15)
+                    .RepeatForever())
+    );
+});
+
+builder.Services.AddQuartz(q =>
+{
+    q.UseMicrosoftDependencyInjectionJobFactory();
+    var updateMatchesJob = new JobKey("updateOddsJob");
+
+    q.AddJob<UpdateOddsJob>(opts => opts.WithIdentity(updateMatchesJob));
+
+    q.AddTrigger(opts => opts
+        .ForJob(updateMatchesJob)
+        .WithIdentity("trigger2", "group2")
                 .StartAt(new DateTimeOffset(DateTime.UtcNow).AddSeconds(5))
                 .WithSimpleSchedule(x => x
-                    .WithIntervalInMinutes(1)
+                    .WithIntervalInMinutes(15)
                     .RepeatForever())
     );
 });

@@ -41,18 +41,30 @@ namespace QuartzApp.Jobs
             var matchModels = await _generateModelService.GetMatchFromRequestAsync("events", dictionary);
             //TODO вынести нижнее в сервис
             foreach (var v in matchModels) {
-                if (!_baseRepository.GetAll<BKMatch>().Any(e => e.ForeignId == v.MatchId.JsonValue))
-                    await _baseRepository.Create(new BKMatch { ForeignId = v.MatchId.JsonValue});
                 if (!_baseRepository.GetAll<BKTeam>().Any(e => e.ForeignTeamId == v.Player1Id.JsonValue))
                     await _baseRepository.Create(new BKTeam { ForeignTeamId = v.Player1Id.JsonValue, TeamName = v.NamePlayer1.JsonValue });
+                else
+                    //Тут добавить обновление коэффициентов если матча нет!
+                    Console.WriteLine();
                 if (!_baseRepository.GetAll<BKTeam>().Any(e => e.ForeignTeamId == v.Player2Id.JsonValue))
                     await _baseRepository.Create(new BKTeam { ForeignTeamId = v.Player2Id.JsonValue, TeamName = v.NamePlayer2.JsonValue });
+                else
+                    //Тут добавить обновление коэффициентов если матча нет!
+                    Console.WriteLine();
+                if (!_baseRepository.GetAll<BKMatch>().Any(e => e.ForeignId == v.MatchId.JsonValue))
+                {
+                    var team1Id = _baseRepository.GetAll<BKTeam>().Single(e => e.ForeignTeamId == v.Player1Id.JsonValue).Id;
+                    var team2Id = _baseRepository.GetAll<BKTeam>().Single(e => e.ForeignTeamId == v.Player2Id.JsonValue).Id;
+                    await _baseRepository.Create(new BKMatch { ForeignId = v.MatchId.JsonValue, Team1Id = team1Id, Team2Id = team2Id, Player1Odds = v.OddsPlayer1.JsonValue, Player2Odds = v.OddsPlayer2.JsonValue });
+                }
+                else
+                    //Тут добавить обновление коэффициентов если матча нет!
+                    Console.WriteLine();
             }
 
             //await _mappingValidator.MatchMappingExistValidator(matchModels);
             //await _mappingValidator.TeamMappingExistValidator(matchModels);
             await _mappingValidator.MappingExistValidator(matchModels);
-            //Для оставшихся по мапингу матчей определяем матч, затем по мапингу команду куда складывать коэффициенты
         }
     }
 }

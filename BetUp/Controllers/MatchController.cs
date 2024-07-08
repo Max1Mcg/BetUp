@@ -25,15 +25,7 @@ namespace BetUp.Controllers
         [HttpPost]
         public async Task AddInternalTeam(InternalMatchHttpModel model)
         {
-            _baseRepository.Create(new Match { });
+            await _baseRepository.Create(new Match {LocalTeam1Id = model.LocalTeam1Id, LocalTeam2Id = model.LocalTeam2Id, Active = model.IsActive});
         }
-
-        //TODO возможно можно удалить т.к. будет по интеграции создаваться
-        /*[Route("[action]")]
-        [HttpPost]
-        public async Task AddExternalTeam(ExternalTeamHttpModel model)
-        {
-            _baseRepository2.Create(new BKTeam { TeamName = model.BKName, ForeignTeamId = model.ExternalTeamId, BkId = model.BKId });
-        }*/
     }
 }

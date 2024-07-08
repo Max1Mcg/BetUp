@@ -67,5 +67,11 @@ namespace MarketPlace.Repositories.Base
         {
             return _context.Set<TEntity>().ToList();
         }
+
+        public async Task Update<TEntity>(TEntity entity) where TEntity : class
+        {
+            _context.Set<TEntity>().Update(entity);
+            await _context.SaveChangesAsync();
+        }
     }
 }

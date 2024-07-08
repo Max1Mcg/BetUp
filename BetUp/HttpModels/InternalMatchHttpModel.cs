@@ -2,6 +2,8 @@
 {
     public class InternalMatchHttpModel
     {
-        public string Name { get; set; }
+        public Guid LocalTeam1Id { get; set; }
+        public Guid LocalTeam2Id { get; set; }
+        public bool IsActive { get; set; }
     }
 }

@@ -12,5 +12,6 @@ namespace MarketPlace.Repositories.Interfaces
         public T? Get(object id);
         TEntity GetById<TEntity>(Guid id) where TEntity : class;
         IEnumerable<TEntity> GetAll<TEntity>() where TEntity : class;
+        Task Update<TEntity>(TEntity entity) where TEntity : class;
     }
 }

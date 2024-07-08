@@ -12,6 +12,7 @@ namespace BetUp.DbModels
         public Guid LocalTeam1Id { get; set; }
         public Team LocalTeam2 { get; set; }
         public Guid LocalTeam2Id { get; set; }
+        public bool Active { get; set; }
 
         public DateTime? Time { get; set; }
 

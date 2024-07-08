@@ -22,16 +22,9 @@ namespace BetUp.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        public async Task AddInternalTeam(InternalMatchHttpModel model)
+        public async Task AddInternalTeam(InternalTeamHttpModel model)
         {
-            _baseRepository.Create(new Team { Name = model.Name});
+            await _baseRepository.Create(new Team { Name = model.Name});
         }
-
-        /*[Route("[action]")]
-        [HttpPost]
-        public async Task AddExternalTeam(ExternalTeamHttpModel model)
-        {
-            _baseRepository2.Create(new BKTeam { TeamName = model.BKName, ForeignTeamId = model.ExternalTeamId, BkId = model.BKId });
-        }*/
     }
 }
